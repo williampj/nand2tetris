@@ -26,7 +26,6 @@ Remarkably, all the functions performed by digital computers—not only arithmet
 #### Signed binary numbers
 
 - If we have to represent signed (positive and negative) numbers in binary code, a natural solution is to split the available code space into two subsets
--
 
 ##### Two's complement
 

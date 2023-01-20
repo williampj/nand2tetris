@@ -27,5 +27,18 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // DMux to determine which chip to select based on two most significant bits of 16-bit address
+      // If address is 00 or 01 => RAM operation
+      // If address is 10 => Keyboard operation
+      // If address is 11 => Screen operation (ignore as Screen does not take input)
+    DMux4Way(in=load, sel=address[13..14], a=rama, b=ramb, c=screenload);
+    Or(a=rama, b=ramb, out=ramload);
+
+    // Executing read/write operations on RAM, Screen and Keyboard chips
+    RAM16K(in=in, load=ramload, address=address[0..13], out=ramout);
+    Screen(in=in, load=screenload, address=address[0..12], out=screenout);
+    Keyboard(out=keyboardout);
+
+    // Mux to select the designated output 
+    Mux4Way16(a=ramout, b=ramout, c=screenout, d=keyboardout, sel=address[13..14], out=out);
 }

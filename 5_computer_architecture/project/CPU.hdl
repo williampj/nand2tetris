@@ -39,5 +39,60 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // Multiplexers
+    Mux16(a=outALU, b=instruction, sel=instA, out=inA);
+    Mux16(a=outA, b=inM, sel=AMtoALU, out=outAM);
+    
+    // Registers
+    ARegister(in=inA, load=loadA, out=outA, out[0..14]=addressM);
+    DRegister(in=outALU, load=loadD, out=outD);
+    PC(in=outA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
+    
+    // ALU
+    ALU(x=outD, y=outAM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, out=outALU, zr=zr, ng=ng);
+    
+    // Decoder
+      // instA logic
+      Not(in=instruction[15], out=instA);
+      // instC logic
+      Not(in=instA, out=instC);
+      // loadA logic
+      And(a=instC, b=instruction[5], out=destA);
+      Or(a=destA, b=instA, out=loadA);
+      // loadD logic (C instruction & D destination is set in instruction)
+      And(a=instC, b=instruction[4], out=loadD);
+      // loadPC logic
+        // JGT condition
+        Or(a=zr, b=ng, out=state1);
+        Not(in=state1, out=pos);
+        And(a=instruction[0], b=pos, out=JGT);
+        // JEQ condition
+        And(a=instruction[1], b=zr, out=JEQ);
+        // JGE condition
+        Or(a=JGT, b=JEQ, out=JGE);
+        // JLT condition
+        And(a=instruction[2], b=ng, out=JLT);
+        // JNE condition
+        Or(a=JGT, b=JLT, out=JNE);
+        // JLE condition
+        Or(a=JLT, b=JEQ, out=JLE);
+        // JMP condition 
+        Or(a=JLE, b=JGT, out=JMP);
+
+        // Nested OR 
+        Or(a=JGT, b=JEQ, out=J1);
+        Or(a=JGE, b=J1, out=J2);
+        Or(a=JLT, b=J2, out=J3);
+        Or(a=JNE, b=J3, out=J4);
+        Or(a=JLE, b=J4, out=J5);
+        Or(a=JMP, b=J5, out=J6);
+        
+        // If c instruction and jump condition is satisfied, PC is loaded with A register output
+        And(a=instC, b=J6, out=loadPC);
+
+        // AMtoALU logic
+        And(a=instruction[12], b=instC, out=AMtoALU);
+        // LoadM logic
+        And(a=instC, b=instruction[3], out=loadM, out=writeM);
+
 }
