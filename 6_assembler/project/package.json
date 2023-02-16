@@ -1,0 +1,15 @@
+{
+  "name": "assembler",
+  "version": "1.0.0",
+  "description": "Assembling assembly instructions into machine language",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "William Jackson",
+  "license": "ISC",
+  "bin" : {
+    "assemble" : "index.js"
+  } 
+}
