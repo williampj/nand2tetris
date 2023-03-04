@@ -1,5 +1,5 @@
 {
-  "name": "vm-translator",
+  "name": "vm-translator-one",
   "version": "1.0.0",
   "description": "A VM translator that translates VM commands into Hack Assembly language commands",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "VMTranslator": "index.js"
+    "VMTranslatorOne": "index.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",

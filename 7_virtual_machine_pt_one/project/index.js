@@ -16,7 +16,6 @@ class Main {
     this.codeWriter = new CodeWriter(Main.#outputFilePath(VMFileName));
   }
 
-  // async translateVMFile() {
   async translateVMFile() {
     while (this.parser.hasMoreLines()) {
       this.parser.advance();
