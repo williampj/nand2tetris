@@ -1,0 +1,95 @@
+/* The WormBoard manages the grid by keeping track of which squares have been 
+ * marked and which are still unnmarked. It is also responsible for requesting 
+ * the Screen object of the operating system to mark newly occupied squares. 
+**/
+class WormBoard {
+  field int sizeX, sizeY;
+  field Array grid;
+  
+  /* Creates a 128 x 64 grid where where each square consists of 4x4 pixels  **/
+  constructor WormBoard new(int startingX, int startingY) {
+    let sizeX = 128;
+    let sizeY = 64;
+    do Screen.setColor(true);
+    do registerGrid();
+    do markSquare(startingX, startingY);
+    
+    return this;
+  }
+  
+  /* Marks the square in the data structure  
+   * and has that square drawn on the screen
+   **/ 
+  method void markSquare(int x, int y) {
+    var Array currentColumn; 
+
+    let currentColumn = grid[x];
+    let currentColumn[y] = true; // records mark in grid data structure
+    do drawSquare(x, y);
+
+    return;
+  }
+
+  /* Registers a data structure for the 128 x 64 grid  **/
+  method void registerGrid() {
+    var Array currentColumn;
+    var int x, y;
+    
+    let x = 0;
+    let grid = Array.new(sizeX);
+
+    while (x < sizeX) {
+      let currentColumn = Array.new(sizeY);
+      let y = 0;
+      
+      while (y < sizeY) {
+        let currentColumn[y] = false;
+        let y = y + 1;
+      }
+
+      let grid[x] = currentColumn;
+      let x = x + 1;
+    }
+
+    return;
+  }
+
+  /* Inspects whether the given square is occupied **/
+  method boolean isOccupied(int x, int y) {
+    var Array currentColumn;
+    
+    if ((x > 126) | (x < 0) | (y > 62) | (y < 0)) { // Out of bounds
+      return true;
+    }
+    let currentColumn = grid[x];
+    
+    return currentColumn[y];
+  }
+  
+  /* Marks the square on the screen **/
+  method void drawSquare(int x, int y) {
+    do Screen.drawRectangle(x*4, y*4, (x*4) + 4, (y*4) + 4);
+
+    return;
+  }
+
+  /* Disposes of the nested array of the grid as well as the worm itself **/
+  method void dispose() {
+    var Array currentColumn;
+    var int x;
+
+    let x = 0;
+
+    while (x < sizeX) {
+      let currentColumn = grid[x];
+      do currentColumn.dispose();
+      let x = x + 1;
+    }
+    
+    do grid.dispose();
+    do Memory.deAlloc(this);
+
+    return;
+  }
+
+}

@@ -1,0 +1,16 @@
+/* The run-time convention is to the sys.init function (part of the operating system)
+ * which is turn calls a Main.main function that is expected as the entry point
+ * of the program. Here, the main function constructs and runs the WormGame 
+ * and disposes of it subsequently
+**/
+class Main {
+  function void main() {
+    var WormGame wormgame; 
+
+    let wormgame = WormGame.new();
+    do wormgame.run();
+    do wormgame.dispose();
+    
+    return;
+  }
+}

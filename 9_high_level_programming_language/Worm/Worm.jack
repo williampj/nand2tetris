@@ -1,0 +1,45 @@
+/* The Worm class is fairly slim as most of the responsibilities of the game 
+ * are assigned to the WormGame and WormBoard classes. The Worm class is 
+ * responsible for keeping track of its current position as well as the 
+ * number of squares that it has traversed
+**/
+class Worm {
+  field int x, y, bodySize;
+
+  /* Places the worm in the middle of the board to start the game **/
+  constructor Worm new(int startingColumn, int startingRow) {
+    let x = startingColumn; 
+    let y = startingRow; 
+    let bodySize = 1;
+    return this;
+  }
+
+  /* Updates worm position and body size **/
+  method void updatePosition(int nextX, int nextY) {
+    let x = nextX; 
+    let y = nextY;
+    let bodySize = bodySize + 1;
+    
+    return; 
+  }
+  
+  /* Disposes of the worm **/
+  method void dispose() {
+    do Memory.deAlloc(this);
+    return;
+  }
+  
+  /* --- Accessors --- **/ 
+
+  method int getBodySize() { 
+    return bodySize; 
+  }
+
+  method int getX() { 
+    return x; 
+  }
+
+  method int getY() { 
+    return y; 
+  }
+}

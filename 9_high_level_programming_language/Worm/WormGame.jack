@@ -1,0 +1,111 @@
+/* The WormGame is a game of a worm that continuously grows until it either 
+ * hits it's own body or moves out of bounds. The game speed is fairly high, 
+ * thus the goal is to cover as many squares as possible
+**/
+class WormGame {
+  field int direction, nextX, nextY;
+  field Worm worm; 
+  field WormBoard wormBoard;
+
+  /* Places the worm in the middle of the board to start the game **/
+  constructor WormGame new() {
+    let worm = Worm.new(64, 32);
+    let wormBoard = WormBoard.new(64, 32);
+    let direction = 3;
+
+    return this;
+  }
+
+  /* Disposes of the worm game **/
+  method void dispose() {
+    do worm.dispose();
+    do Memory.deAlloc(this);
+
+    return;
+  }
+
+  /* Runs the game **/
+  method void run() {
+    var char key; 
+    var boolean quit; 
+    let quit = false; 
+
+    while (~quit) {
+      while (key = 0) {
+        let key = Keyboard.keyPressed();
+        do Sys.wait(15);
+        do setTargetSquare();
+        
+        if (wormBoard.isOccupied(nextX, nextY)) { 
+          do gameOver(worm.getBodySize());
+          let quit = true;
+        } else {
+          do worm.updatePosition(nextX, nextY);
+          do wormBoard.markSquare(nextX, nextY);
+        }
+      }
+      
+      if (key = 81) {let quit = true;} // q key to quit
+      if (key = 130) {let direction = 1;} // left arrow
+      if (key = 131) {let direction = 2;} // up arrow
+      if (key = 132) {let direction = 3;} // right arrow
+      if (key = 133) {let direction = 4;} // down arrow
+      
+      while (~(key = 0)) {
+        let key = Keyboard.keyPressed();
+        do Sys.wait(15);
+        do setTargetSquare();
+
+        if (wormBoard.isOccupied(nextX, nextY)) { 
+          do gameOver(worm.getBodySize());
+          let quit = true;
+        } else {
+          do worm.updatePosition(nextX, nextY);
+          do wormBoard.markSquare(nextX, nextY);
+        }
+      }
+    }
+    do worm.dispose();
+    do wormGame.dispose();
+    return;
+  }
+
+  /* Sets the coordinates for the next square that the worm is moving into **/
+  method void setTargetSquare() {
+    if (direction = 1) {
+      let nextX = worm.getX() - 1;
+      let nextY = worm.getY();
+    }
+
+    if (direction = 2) {
+      let nextX = worm.getX();
+      let nextY = worm.getY() - 1;
+    }
+
+    if (direction = 3) {
+      let nextX = worm.getX() + 1;
+      let nextY = worm.getY();
+    }
+
+    if (direction = 4) {
+      let nextX = worm.getX();
+      let nextY = worm.getY() + 1;
+    }
+
+    return;
+  }
+
+  /* Clears the screen and prints a message of how many squares the user was able to cover **/
+  method void gameOver(int bodySize) {
+    do Sys.wait(500);
+    do Screen.clearScreen();
+    do Output.moveCursor(11, 31);
+    do Output.printString("Game Over");
+    do Output.println();
+    do Output.printString("You managed to grow the worm to a length of ");
+    do Output.printInt(bodySize);
+    do Output.printString(" squares");
+
+    return;
+  }
+}
