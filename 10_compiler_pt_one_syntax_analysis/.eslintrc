@@ -1,0 +1,16 @@
+{
+  "extends": ["airbnb-base", "eslint:recommended"],
+  "rules": {
+    "indent": [2, 2, { "SwitchCase": 1 }],
+    "lines-between-class-members": "off",
+    "no-console": "off",
+    "no-await-in-loop": "off",
+    "no-bitwise": "off",
+    "no-restricted-syntax": "off",
+    "no-restricted-imports": "off",
+    "prefer-destructuring": "off"
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  }
+}
