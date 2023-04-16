@@ -3,18 +3,6 @@
 import { createWriteStream } from 'fs';
 
 export default class CodeWriter {
-  // static #variablePointerAddress = {
-  //   SP: 0,
-  //   local: 1,
-  //   argument: 2,
-  //   this: 3,
-  //   THIS: 3,
-  //   that: 4,
-  //   THAT: 4,
-  //   temp: 5,
-  //   static: 16,
-  // };
-
   static #segmentSymbols = {
     argument: 'ARG',
     local: 'LCL',
@@ -27,13 +15,13 @@ export default class CodeWriter {
   #staticFileName;
   #comparisonJumps = 0;
 
-  #createOutputFile(outputFilePath) {
+  async #createOutputFile(outputFilePath) {
     this.#outputFile = createWriteStream(outputFilePath);
   }
 
   // LCL, ARG, THIS, THAT Later
-  #writeInitializePointers() {
-    this.#outputFile.write(
+  async #writeInitializePointers() {
+    await this.#outputFile.write(
       `// initializing @SP to 256
 @256
 D=A
@@ -110,7 +98,7 @@ M=M+1
   }
 
   async #writeLogicTopTwoElements(command) {
-    this.#outputFile.write(
+    await this.#outputFile.write(
       `// ${command}
 @SP
 M=M-1
@@ -310,7 +298,6 @@ M=M+1
   constructor(outputFilePath) {
     this.#createOutputFile(outputFilePath);
     this.#setStaticVariable(outputFilePath);
-    // this.#writeInitializePointers();
   }
 
   async writeArithmetic(command) {
@@ -319,21 +306,21 @@ M=M+1
       return;
     }
     // add, sub
-    this.#writeArithmeticTopTwoElements(command);
+    await this.#writeArithmeticTopTwoElements(command);
   }
 
   async writeComparison(command) {
     // lt, eq, gt
-    this.#writeComparisonPrivate(command);
+    await this.#writeComparisonPrivate(command);
   }
 
   async writeLogic(command) {
     if (command === 'not') {
-      this.#writeBitwiseNotTopElement(command);
+      await this.#writeBitwiseNotTopElement(command);
       return;
     }
     // and, or
-    this.#writeLogicTopTwoElements(command);
+    await this.#writeLogicTopTwoElements(command);
   }
 
   async writePushPop({ command, segment, index }) {
@@ -387,12 +374,6 @@ M=M+1
   }
 
   async close() {
-    //     await this.#outputFile.write(
-    //       `// closing loop
-    // (END)
-    // @END
-    // 0;JMP`,
-    //     );
     await this.#outputFile?.end();
   }
 }

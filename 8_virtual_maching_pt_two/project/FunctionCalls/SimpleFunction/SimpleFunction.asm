@@ -1,3 +1,72 @@
+// initializing @SP to 256
+@256
+D=A
+@SP
+M=D
+@returnAddress1
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1
+
+// push LCL
+@LCL
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+
+// push ARG
+@ARG
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+
+// push THIS
+@THIS
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+
+// push THAT
+@THAT
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1
+
+// ARG = SP - 5 - nArgs
+@SP
+D=M
+@0
+D=D-A
+@5
+D=D-A
+@ARG
+M=D
+
+// LCL = SP
+@SP
+D=M
+@LCL
+M=D
+
+// go to
+@Sys.init
+0;JMP
+(returnAddress1)
 // function SimpleFunction.test 2
 (SimpleFunction.test)
 @0

@@ -27,10 +27,8 @@ export default class Parser {
 
   #loadVMInstructions(VMFileName) {
     try {
-      const VMFile = readFileSync(VMFileName).toString().split('\r\n');
-      this.#VMInstructions = VMFile.filter(
-        (line) => !!line.trim() && !line.startsWith('//'),
-      );
+      const VMFile = readFileSync(VMFileName).toString().split('\n').map((line) => line.trim());
+      this.#VMInstructions = VMFile.filter((line) => !!line && !line.startsWith('//'));
       this.#numberOfVMInstructions = this.#VMInstructions.length;
     } catch (e) {
       console.error(e);

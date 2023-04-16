@@ -2,15 +2,19 @@
   "name": "jack-language-compiler-part-one",
   "version": "1.0.0",
   "description": "A Compiler that compiles code in the high level Jack language into XML format",
-  "main": "index.js",
+  "main": "JackAnalyzer.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel submission -d babelLib"
   },
   "author": "",
   "license": "ISC",
   "bin": {
-    "JackAnalyzer": "index.js"
+    "JackAnalyzer": "JackAnalyzer.js"
+  },
+  "babel": {
+    "presets": ["@babel/preset-env"]
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",

@@ -27,11 +27,11 @@ export default class CodeWriter {
   async #writeBootstrapCode() {
     this.#outputFile.write(
       `// initializing @SP to 256
-@256
-D=A
-@SP
-M=D
-`,
+  @256
+  D=A
+  @SP
+  M=D
+  `,
     );
     await this.#writeCall({ functionName: 'Sys.init', numArguments: 0 });
   }
@@ -432,9 +432,11 @@ D;JNE
     );
   }
 
-  constructor(outputFilePath) {
+  constructor(outputFilePath, includeBootstrap) {
     this.#createOutputFile(outputFilePath);
-    this.#writeBootstrapCode();
+    if (includeBootstrap) {
+      this.#writeBootstrapCode();
+    }
   }
 
   setFileName(fileName) {

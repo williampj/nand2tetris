@@ -1,3 +1,28 @@
+// initializing @SP to 256
+@256
+D=A
+@SP
+M=D
+// initializing @LCL to 300
+@300
+D=A
+@LCL
+M=D
+// initializing @ARG to 400
+@400
+D=A
+@ARG
+M=D
+// initializing @THIS to 3000
+@3000
+D=A
+@THIS
+M=D
+// initializing @THAT to 3010 
+@3010
+D=A
+@THAT
+M=D
 // push constant 3030
 @3030
 D=A
