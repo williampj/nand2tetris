@@ -1,0 +1,103 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+  // using arrays as pointers
+  static Array ram, heap, freeList; 
+  
+  /** Initializes the class. */
+  function void init() {
+    var Array block;
+
+    let ram = 0;
+    let heap = 2048; // base address of heap
+    let block = heap;
+    let block[0] = null; // no next block at init
+    let block[1] = 14334; // size of heap - 2 (to account for segment headers)
+    let freeList = block; // the freeList is one large, contiguous block
+    
+    return;
+  }
+
+  /** Returns the RAM value at the given address. */
+  function int peek(int address) {
+    return ram[address];
+  }
+
+  /** Sets the RAM value at the given address to the given value. */
+  function void poke(int address, int value) {
+    let ram[address] = value;
+    return;
+  }
+
+  /** Finds an available RAM block of the given size and returns
+    *  a reference to its base address. */
+  function int alloc(int size) {
+    var Array block, prevBlock;
+    var int sizeDiff, sizeToAllocate;
+
+    if (size < 0) {
+      do Sys.error(5); // Allocated memory size must be positive
+    }
+
+    let prevBlock = freeList;
+    let sizeToAllocate = size + 2; // plus segment headers 'next' and 'size'
+
+    while (prevBlock[1] < sizeToAllocate) {
+      let prevBlock = prevBlock[0]; // setting it to next linked block
+      if (prevBlock = null) {
+        do Sys.error(6); // Heap overflow
+      }
+    }
+
+    let sizeDiff = prevBlock[1] - sizeToAllocate;
+    let block = prevBlock + sizeDiff + 2; // beginnning of carved out block
+    let prevBlock[1] = sizeDiff; // reduce size count of block
+
+    let block[0] = null;
+    let block[1] = size;
+
+    return block;
+  }
+  /** De-allocates the given object (cast as an array) by making
+    *  it available for future allocations. 
+    *  Also performs defragmentation during de-allocation. 
+    */
+  function void deAlloc(Array o) {
+    var Array deallocSegment, prevSegment, nextSegment; 
+    let deallocSegment = o - 2;
+    let prevSegment = freeList;
+    let nextSegment = prevSegment[0];
+
+    // iterates free list to return block to the correct place based on ascending ram address
+    while (~(nextSegment = null) & (nextSegment < deallocSegment)) {
+      let prevSegment = nextSegment;
+      let nextSegment = prevSegment[0];
+    }
+
+    // inserts de-allocated block in the free list 
+    let prevSegment[0] = deallocSegment;
+    let deallocSegment[0] = nextSegment;
+
+    // if next block is contiguous, it merges the two blocks
+    if ((deallocSegment + deallocSegment[1] + 2) = nextSegment) {
+      let deallocSegment[0] = nextSegment[0];
+      let deallocSegment[1] = deallocSegment[1] + nextSegment[1] + 2;
+    }
+
+    // if previous block is contiguous, it merges the two blocks
+    if ((prevSegment + prevSegment[1] + 2) = deallocSegment) {
+      let prevSegment[0] = nextSegment[0];
+      let prevSegment[1] = prevSegment[1] + deallocSegment[1] + 2;
+    }
+
+    return;
+  }
+}
